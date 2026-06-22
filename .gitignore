@@ -1,0 +1,8 @@
+# Ignore compiled executables
+*.exe
+
+# Ignore generated C files from flex
+lex.yy.c
+
+# Ignore object files
+*.o
