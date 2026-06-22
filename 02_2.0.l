@@ -1,3 +1,5 @@
+/* 02. Write a lex program to count the characters, words and lines in a given C program. */
+
 %{ 
 #include <stdio.h> 
 int char_count = 0, word_count = 0, line_count = 0; 
