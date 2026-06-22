@@ -39,15 +39,10 @@ A collection of **10 compiler design lab programs** implementing lexical analysi
 ### Flex Programs
 
 ```bash
-# Step 1: Generate C source from .l file
-flex program.l
-
-# Step 2: Compile
-gcc lex.yy.c -o program
-
-# Step 3: Run (some accept stdin, some accept file arguments)
-./program < input.txt        # stdin mode
-./program input.c            # file mode (Program 10)
+flex program.l          # Step 1: Generate C source from .l file
+gcc lex.yy.c -o program # Step 2: Compile
+./program < input.txt   # Step 3: Run (stdin mode)
+./program input.c       # Step 3: Run (file mode - Program 10)
 ```
 
 ### Python Programs
@@ -76,7 +71,9 @@ Recognizes Bangladeshi mobile phone numbers and identifies the operator.
 
 **Run:**
 ```bash
-flex 01_Recognize_teephone.l && gcc lex.yy.c -o phone && ./phone
+flex 01_Recognize_teephone.l
+gcc lex.yy.c -o phone
+./phone
 ```
 
 **Test Input:**
@@ -105,7 +102,9 @@ Counts the number of characters, words, and lines in a given C program.
 
 **Run:**
 ```bash
-flex 02_count_characters_words_lines.l && gcc lex.yy.c -o count && ./count < test.c
+flex 02_count_characters_words_lines.l
+gcc lex.yy.c -o count
+./count < test.c
 ```
 
 **Test Input (`test.c`):**
@@ -133,7 +132,9 @@ Classifies numeric literals into four categories: Integer, Floating-Point, Expon
 
 **Run:**
 ```bash
-flex 03_identify_int_float_exp_colplex.l && gcc lex.yy.c -o numbers && ./numbers
+flex 03_identify_int_float_exp_colplex.l
+gcc lex.yy.c -o numbers
+./numbers
 ```
 
 **Test Input:**
@@ -163,7 +164,9 @@ Counts the total number of whitespace characters and comments (both `//` and `/*
 
 **Run:**
 ```bash
-flex 04_count_space_and_comment.l && gcc lex.yy.c -o spcomment && ./spcomment < test.c
+flex 04_count_space_and_comment.l
+gcc lex.yy.c -o spcomment
+./spcomment < test.c
 ```
 
 **Test Input (`test.c`):**
@@ -192,7 +195,9 @@ Identifies and counts all user-defined identifiers in a C program, skipping keyw
 
 **Run:**
 ```bash
-flex 05_recognize_and_count_identifiers.l && gcc lex.yy.c -o identifiers && ./identifiers < test.c
+flex 05_recognize_and_count_identifiers.l
+gcc lex.yy.c -o identifiers
+./identifiers < test.c
 ```
 
 **Test Input (`test.c`):**
@@ -226,7 +231,9 @@ Recognized forms: `am`, `is`, `are`, `was`, `were`, `been`, `have`, `has`, `be`
 
 **Run:**
 ```bash
-flex 06_recognize_be_verb.l && gcc lex.yy.c -o beverb && ./beverb
+flex 06_recognize_be_verb.l
+gcc lex.yy.c -o beverb
+./beverb
 ```
 
 **Test Input:**
@@ -262,7 +269,9 @@ Classifies each line as **Simple**, **Complex**, **Compound**, or **Compound-Com
 
 **Run:**
 ```bash
-flex 07_check_simple_complex_compound.l && gcc lex.yy.c -o sentence && ./sentence
+flex 07_check_simple_complex_compound.l
+gcc lex.yy.c -o sentence
+./sentence
 ```
 
 **Test Input:**
@@ -369,7 +378,9 @@ A complete lexical analyzer for the C programming language. Processes preprocess
 
 **Run:**
 ```bash
-flex 10_C_lexer.l && gcc lex.yy.c -o c_lexer && ./c_lexer test.c
+flex 10_C_lexer.l
+gcc lex.yy.c -o c_lexer
+./c_lexer test.c
 ```
 
 **Test Input (`test.c`):**
@@ -404,31 +415,19 @@ Statements:       4
 
 ```
 Compiler_Lab/
-├── 01_Recognize_teephone.l          # Flex: Phone operator recognizer
-├── 02_count_characters_words_lines.l # Flex: Char/word/line counter
-├── 03_identify_int_float_exp_colplex.l # Flex: Number type classifier
-├── 04_count_space_and_comment.l      # Flex: Space & comment counter
-├── 05_recognize_and_count_identifiers.l # Flex: Identifier recognizer
-├── 06_recognize_be_verb.l            # Flex: "To be" verb detector
-├── 07_check_simple_complex_compound.l # Flex: Sentence type classifier
-├── 08_first_follow.py                # Python: FIRST & FOLLOW calculator
-├── 09_CFG_ambiguity_check.py         # Python: CFG ambiguity checker
-├── 10_C_lexer.l                      # Flex: Complete C lexer
-├── README.md                         # This file
-├── Notes/                            # Lab problem statements (PDF/DOCX)
-└── Software/                         # flex & bison installers
-```
-
----
-
-## 🔧 Build All Flex Programs at Once
-
-```bash
-# Build all Flex programs
-for f in 01_Recognize_teephone.l 02_count_characters_words_lines.l 03_identify_int_float_exp_colplex.l 04_count_space_and_comment.l 05_recognize_and_count_identifiers.l 06_recognize_be_verb.l 07_check_simple_complex_compound.l 10_C_lexer.l; do
-    base=$(basename "$f" .l)
-    flex "$f" && gcc lex.yy.c -o "$base" && echo "Built: $base"
-done
+├── 01_Recognize_teephone.l          
+├── 02_count_characters_words_lines.l 
+├── 03_identify_int_float_exp_colplex.l 
+├── 04_count_space_and_comment.l  
+├── 05_recognize_and_count_identifiers.l
+├── 06_recognize_be_verb.l         
+├── 07_check_simple_complex_compound.l 
+├── 08_first_follow.py              
+├── 09_CFG_ambiguity_check.py        
+├── 10_C_lexer.l                  
+├── README.md                         
+├── Notes/                            
+└── Software/
 ```
 
 ---
