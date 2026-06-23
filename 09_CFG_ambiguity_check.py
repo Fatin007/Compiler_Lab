@@ -1,143 +1,118 @@
-# 09. Write  a  Program  to  identify  if  a  CFG  is  ambiguous  or  not.  If  ambiguous, remove that and show the non-ambiguous grammar in the output. (any Lang)
+# 09. Write a Program to identify if a CFG has left-recursion (ambiguity).
+#     If present, eliminate it and show the non-ambiguous grammar.
 
-class NonTerminal :
-    def __init__(self, name) :
-        self.name = name
-        self.rules = []
-    def addRule(self, rule) :
-        self.rules.append(rule)
-    def setRules(self, rules) :
-        self.rules = rules
-    def getName(self) :
-        return self.name
-    def getRules(self) :
-        return self.rules
-    def printRule(self) :
-        print(self.name + " -> ", end = "")
-        for i in range(len(self.rules)) :
-            print(self.rules[i], end = "")
-            if i != len(self.rules) - 1 :
-                print(" | ", end = "")
-        print()
+from collections import OrderedDict
 
 
-class Grammar :
-    def __init__(self) :
-        self.nonTerminals = []
+def get_grammar():
+    """Read grammar interactively from stdin (like program 08)."""
+    grammar = OrderedDict()
+    print("Enter grammar (space-separated symbols, | for alternatives, # for epsilon):")
+    print("Example:  S -> A a | b")
+    print("          A -> A c | S d | #\n")
+    print("Enter empty line to finish:\n")
 
-    def addRule(self, rule):
-        arrowDefn = "->"
-        arrowPos = rule.find(arrowDefn)
-        if arrowPos == -1:
-            print("Invalid rule format: missing '->'")
-            return
-        lhs = rule[:arrowPos].strip()
-        rhs = rule[arrowPos+len(arrowDefn):].strip()
+    while True:
+        try:
+            line = input().strip()
+        except EOFError:
+            break
+        if not line:
+            break
 
-        prodrules = [alt.strip() for alt in rhs.split('|')]
+        lhs, _, rhs = line.partition('->')
+        lhs = lhs.strip()
+        rhs = rhs.strip()
 
-        nt = NonTerminal(lhs)
-        for alt in prodrules:
-            nt.addRule(alt)
-        self.nonTerminals.append(nt)
+        prods = []
+        for alt in rhs.split('|'):
+            symbols = alt.strip().split()
+            prods.append(symbols if symbols else ['#'])
+        grammar[lhs] = prods
 
-    def inputData(self) :
-        self.addRule('S->Aa|b')
-        self.addRule('A->Ac|Sd|ϵ')
-
-    def printRules(self) :
-        for nt in self.nonTerminals :
-            nt.printRule()
-
-    def solveNonImmediateLR(self, A, B) :
-        nameA = A.getName()
-        nameB = B.getName()
-
-        rulesA = A.getRules()
-        rulesB = B.getRules()
-        newRulesA = []
-
-        for rule in rulesA :
-            if rule[0 : len(nameB)] == nameB :
-                for rule1 in rulesB :
-                    if rule1 == "ϵ":
-                        newRulesA.append(rule[len(nameB) : ])
-                    else:
-                        newRulesA.append(rule1 + rule[len(nameB) : ])
-            else :
-                newRulesA.append(rule)
-        A.setRules(newRulesA)
-
-    def solveImmediateLR(self, A) :
-        name = A.getName()
-        newName = name + "'"
-
-        alphas = []
-        betas = []
-        rules = A.getRules()
-        newRulesA = []
-        newRulesA1 = []
-
-        for rule in rules :
-            if rule[0 : len(name)] == name :
-                alphas.append(rule[len(name) : ])
-            else :
-                betas.append(rule)
-
-        if len(alphas) == 0 :
-            return
-
-        if len(betas) == 0 or (len(betas) == 1 and betas[0] == "ϵ"):
-            newRulesA.append(newName)
-        else:
-            for beta in betas :
-                if beta == "ϵ":
-                    newRulesA.append(newName)
-                else:
-                    newRulesA.append(beta + newName)
-
-        for alpha in alphas :
-            newRulesA1.append(alpha + newName)
-
-        A.setRules(newRulesA)
-        newRulesA1.append("ϵ")
-
-        nnt = NonTerminal(newName)
-        nnt.setRules(newRulesA1)
-        self.nonTerminals.append(nnt)
-
-    def hasLeftRecursion(self):
-        for nt in self.nonTerminals:
-            name = nt.getName()
-            for rule in nt.getRules():
-                if rule[0 : len(name)] == name:
-                    return True
-        return False
-
-    def applyAlgorithm(self) :
-        is_recursive = self.hasLeftRecursion()
-        
-        if is_recursive:
-            print("\nLeft-Recursion/Ambiguity risk found! Eliminating dependencies...")
-            
-            original_non_terminals = list(self.nonTerminals)
-            size = len(original_non_terminals)
-            
-            for i in range(size) :
-                for j in range(i) :
-                    self.solveNonImmediateLR(original_non_terminals[i], original_non_terminals[j])
-                self.solveImmediateLR(original_non_terminals[i])
-        else:
-            print("\nGrammar has no immediate left-recursion issues.")
+    return grammar
 
 
-grammar = Grammar()
-grammar.inputData()
+def print_grammar(grammar, title="Production Rules"):
+    """Pretty-print the grammar."""
+    print(f"\n--- {title} ---")
+    for lhs, prods in grammar.items():
+        alts = [' '.join(p) if p != ['#'] else 'ε' for p in prods]
+        print(f"  {lhs} -> {' | '.join(alts)}")
 
-print("--- Original Production Rules ---")
-grammar.printRules()
 
-grammar.applyAlgorithm()
+def has_left_recursion(grammar):
+    """Check if any rule has immediate left-recursion."""
+    for lhs, prods in grammar.items():
+        for p in prods:
+            if p and p[0] == lhs:
+                return True
+    return False
 
-print("\n--- Processed Production Rules ---")
-grammar.printRules()
+
+def eliminate_left_recursion(grammar):
+    """Eliminate immediate left-recursion from the grammar."""
+    new_grammar = OrderedDict()
+    extra_rules = OrderedDict()
+
+    for lhs, prods in grammar.items():
+        alphas = []   # rules starting with lhs (left-recursive)
+        betas = []    # rules not starting with lhs
+
+        for p in prods:
+            if p and p[0] == lhs:
+                alphas.append(p[1:] if len(p) > 1 else [])
+            else:
+                betas.append(p)
+
+        if not alphas:
+            # No left-recursion for this non-terminal
+            new_grammar[lhs] = prods
+            continue
+
+        # Create new non-terminal: A'
+        new_nt = lhs + "'"
+
+        # A  -> beta1 A' | beta2 A' | ...
+        new_prods = []
+        for b in betas:
+            if b == ['#']:
+                new_prods.append([new_nt])
+            else:
+                new_prods.append(b + [new_nt])
+        new_grammar[lhs] = new_prods if new_prods else [[new_nt]]
+
+        # A' -> alpha1 A' | alpha2 A' | ... | #
+        new_prods2 = []
+        for a in alphas:
+            new_prods2.append((a if a else []) + [new_nt])
+        new_prods2.append(['#'])
+        extra_rules[new_nt] = new_prods2
+
+    # Add the new rules at the end
+    for nt, prods in extra_rules.items():
+        new_grammar[nt] = prods
+
+    return new_grammar
+
+
+def main():
+    grammar = get_grammar()
+
+    if not grammar:
+        print("No grammar provided.")
+        return
+
+    print_grammar(grammar, "Original Production Rules")
+
+    if has_left_recursion(grammar):
+        print("\n⚠ Left-Recursion/Ambiguity risk found! Eliminating dependencies...")
+        grammar = eliminate_left_recursion(grammar)
+    else:
+        print("\n✅ Grammar has no immediate left-recursion issues.")
+
+    print_grammar(grammar, "Processed Production Rules")
+
+
+if __name__ == "__main__":
+    main()

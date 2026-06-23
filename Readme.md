@@ -341,31 +341,33 @@ FOLLOW:
 
 **File:** `09_CFG_ambiguity_check.py`
 
-Detects **left-recursion** (a source of ambiguity in top-down parsing) in a CFG and eliminates it by transforming the grammar. Uses a hardcoded example grammar.
+Detects **left-recursion** (a source of ambiguity in top-down parsing) in a CFG and eliminates it by transforming the grammar. Accepts grammar rules interactively via stdin.
 
 **Run:**
 ```bash
 python 09_CFG_ambiguity_check.py
 ```
 
-**Test Case (built-in grammar):**
+**Test Input:**
 ```
 S -> A a | b
-A -> A c | S d | ε
+A -> A c | S d | #
 ```
+*(Press Enter on empty line to finish)*
 
 **Expected Output:**
 ```
---- Original Production Rules ---
-S -> Aa | b
-A -> Ac | Sd | ε
 
-Left-Recursion/Ambiguity risk found! Eliminating dependencies...
+--- Original Production Rules ---
+  S -> A a | b
+  A -> A c | S d | ε
+
+⚠ Left-Recursion/Ambiguity risk found! Eliminating dependencies...
 
 --- Processed Production Rules ---
-S -> Aa | b
-A -> bdA' | A' | Ada'
-A' -> cA' | ε
+  S -> A a | b
+  A -> S d A' | b A'
+  A' -> c A' | ε
 ```
 
 ---
@@ -438,3 +440,31 @@ Compiler_Lab/
 - Programs 01–07 read from **stdin**; Program 10 reads from a **file argument**.
 - The `Software/` folder contains Windows installers for Flex 2.5.4a and Bison 2.4.1.
 - Python programs (08, 09) require no external libraries — standard library only.
+
+<div align="center">
+
+---
+
+## 🧩 Extension
+
+<br/>
+
+[![VS Code Extension](https://img.shields.io/badge/VS_Code-Marketplace-007ACC?style=for-the-badge&logo=visualstudiocode&logoColor=white)](vscode:extension/luniclynx.lex)
+
+### 🔗 [LunicLynx Lex](vscode:extension/luniclynx.lex)
+
+*Syntax Highlighting for Flex/Lex `.l` files in VS Code*
+
+> Get beautiful syntax highlighting for all your `.l` (Flex/Lex) files directly in Visual Studio Code.
+
+<br/>
+
+### 🔗 [Markdown Preview Enhanced](vscode:extension/shd101wyy.markdown-preview-enhanced)
+
+*Supercharged Markdown Preview with live reload, diagrams, and export*
+
+> Preview your README and Markdown files with **live reload**, **Mermaid diagrams**, **PlantUML**, **LaTeX math**, **TOC generation**, and export to PDF/HTML.
+
+<br/>
+
+</div>
