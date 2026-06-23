@@ -106,7 +106,7 @@ def main():
     print_grammar(grammar, "Original Production Rules")
 
     if has_left_recursion(grammar):
-        print("\n⚠ Left-Recursion/Ambiguity risk found! Eliminating dependencies...")
+        print("\nLeft-Recursion/Ambiguity risk found! Eliminating dependencies...")
         grammar = eliminate_left_recursion(grammar)
     else:
         print("\n✅ Grammar has no immediate left-recursion issues.")
